@@ -8,10 +8,13 @@ const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
 const PORT = 8000;
-
 const app = express();
+const userRoute = require("./routes/users");
+const pinRoute = require("./routes/pins");
 
 dotenv.config();
+
+app.use(express.json());
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -28,5 +31,8 @@ app.use(helmet());
 app.use(cors());
 
 // app.router...can use this to organize into other folders
+
+app.use("/api/users", userRoute);
+app.use("/api/pins", pinRoute);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
