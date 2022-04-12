@@ -16,7 +16,8 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const pins = await Pin.find();
-    res.status(200).json(pins);
+    console.log(pins);
+    res.status(200).json({ status: 200, data: pins, message: "success" });
   } catch (err) {
     res.status(500).json(err);
   }
