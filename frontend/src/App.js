@@ -14,7 +14,10 @@ function App() {
   const [currentUser, setCurrentUser] = useState(
     window.localStorage.getItem("user")
   );
-  const [pins, setPins] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(
+    window.localStorage.getItem("userId")
+  );
+  const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [newPlace, setNewPlace] = useState(null);
   const [title, setTitle] = useState(null);
@@ -22,6 +25,12 @@ function App() {
   const [rating, setRating] = useState(0);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+
+  const [numOfLikes, setNumOfLikes] = useState(0);
+
+  const [isLiked, setIsLiked] = useState(null);
+
+  const [numLike, setNumLike] = useState(null);
 
   console.log(process.env.REACT_APP_MAPBOX);
 
@@ -32,7 +41,7 @@ function App() {
         setPins(data.data);
         console.log(data.data);
       });
-  }, []);
+  }, [isLiked]);
 
   // useEffect(() => {
   //   const getPins = async () => {
@@ -51,9 +60,18 @@ function App() {
   //   getPins().then((listPins) => setPins(listPins.data));
   //   console.log(pins);
   // }, []);
+  const setTrue = () => {
+    setIsLiked(true);
+    setNumLike(-1);
+  };
 
-  const handleMarkerClick = (id, lat, long) => {
-    setCurrentPlaceId(id);
+  const setFalse = () => {
+    setIsLiked(false);
+    setNumLike(+1);
+  };
+  const handleMarkerClick = (p) => {
+    setCurrentPlaceId(p._id);
+    p.likes.includes(currentUserId) ? setTrue() : setFalse();
   };
 
   const handleAddClick = (e) => {
@@ -74,14 +92,13 @@ function App() {
       rating,
       lat: newPlace.lat,
       long: newPlace.long,
-      numLiked: 0,
+      numOfLikes,
     };
 
     try {
       const res = await axios.post("/pins", newPin);
       console.log("CONNECTED");
       setPins([...pins, res.data]);
-
       setNewPlace(null);
     } catch (err) {
       console.log(err);
@@ -93,6 +110,29 @@ function App() {
     setCurrentUser(null);
   };
   console.log(pins);
+  console.log(isLiked);
+
+  const handleLike = (_id) => {
+    console.log(isLiked);
+    console.log(numLike);
+    // console.log(currentUser);
+
+    fetch(`/pins/${_id}/like`, {
+      method: "PATCH",
+      body: JSON.stringify({ currentUser, numLike, currentUserId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setIsLiked(!isLiked);
+        setNumLike(numLike === 1 ? -1 : 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     pins && (
@@ -117,7 +157,7 @@ function App() {
         >
           {pins &&
             pins?.map((p) => {
-              console.log(p.lat);
+              // console.log(p.lat);
               return (
                 <>
                   <Marker
@@ -132,7 +172,7 @@ function App() {
                         color: p.username === currentUser ? "tomato " : "blue",
                         cursor: "pointer",
                       }}
-                      onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
+                      onClick={() => handleMarkerClick(p)}
                     />
                   </Marker>
                   {p._id === currentPlaceId && (
@@ -146,7 +186,7 @@ function App() {
                       onClose={() => setCurrentPlaceId(null)}
                     >
                       <div className="card">
-                        <label for="place">Place</label>
+                        <label htmlFor="place">Place</label>
                         <h4 className="place" name="place">
                           {p.title}
                           {console.log(p)}
@@ -163,17 +203,38 @@ function App() {
                           Created by <b>{p.username}</b>
                         </span>
                         <span className="date"> {format(p.createdAt)}</span>
+                        <span className="numLikes">
+                          Number of likes: <b>{p.numOfLikes}</b>
+                        </span>
                       </div>
-                      <span className="numLikes"> Number of Likes:</span>
-                      <LikeActions />
+                      {console.log(p.likes?.includes(currentUserId))}
+                      {console.log(currentUserId)}
+                      {console.log(p.likes)}
+                      {p.likes?.includes(currentUserId) ? (
+                        <LikeActions
+                          currentUser={currentUser}
+                          _id={p._id}
+                          liked={isLiked}
+                          handleLike={handleLike}
+                          currentUserId={currentUserId}
+                        />
+                      ) : (
+                        <LikeActions
+                          currentUser={currentUser}
+                          _id={p._id}
+                          liked={isLiked}
+                          handleLike={handleLike}
+                          currentUserId={currentUserId}
+                        />
+                      )}
                     </Popup>
                   )}
                 </>
               );
             })}
-
           {newPlace && (
             //to add a new place
+
             <Popup
               latitude={newPlace.lat}
               longitude={newPlace.long}
@@ -237,7 +298,7 @@ function App() {
                 setCurrentUser={setCurrentUser}
               />
             )}
-          </div>
+          </div>{" "}
         </Map>
       </div>
     )

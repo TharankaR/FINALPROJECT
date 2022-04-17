@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema(
       require: true,
       min: 6,
     },
+    isLiked: {
+      type: Boolean,
+      require: true,
+    },
   },
   { timestamps: true } // automatically created and updated
 );

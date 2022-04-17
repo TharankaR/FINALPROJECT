@@ -32,6 +32,13 @@ const PinSchema = new mongoose.Schema(
       type: Number,
       require: true,
     },
+
+    numOfLikes: {
+      type: Number,
+    },
+    likes: {
+      type: Array,
+    },
   },
   { timestamps: true } // automatically created and updated
 );

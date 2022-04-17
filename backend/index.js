@@ -26,9 +26,9 @@ mongoose
   })
   .catch((err) => console.log(err));
 
-app.use(morgan("tiny"));
-app.use(helmet());
-app.use(cors());
+// app.use(morgan("tiny"));
+// app.use(helmet());
+// app.use(cors());
 
 // app.router...can use this to organize into other folders
 

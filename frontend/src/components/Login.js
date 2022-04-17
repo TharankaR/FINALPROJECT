@@ -21,6 +21,7 @@ const Login = ({ setShowLogin, setCurrentUser }) => {
       const res = await axios.post("/users/login", user);
       //this contains userid and username
       window.localStorage.setItem("user", res.data.username);
+      window.localStorage.setItem("userId", res.data._id);
       setCurrentUser(res.data.username);
       setShowLogin(false);
       setError(false);
