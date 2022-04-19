@@ -34,5 +34,6 @@ mongoose
 
 app.use("/api/users", userRoute);
 app.use("/api/pins", pinRoute);
+// app.delete("/api/delete", pinRoute);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { FavoriteBorder } from "@material-ui/icons";
 import { FiHeart } from "react-icons/fi";
 
 const LikeActions = ({

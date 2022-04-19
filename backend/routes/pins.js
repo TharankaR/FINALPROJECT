@@ -36,7 +36,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+//delete a pin
+router.delete("/:_id/delete", async (req, res) => {
+  const { _id } = req.params;
+  const deletePins = await Pin.deleteOne({ _id });
+  console.log(_id);
+  console.log(deletePins);
+  res.status(204).json({ status: 204, message: "deleted" });
+});
 //like a pin
+
 //add _id to pins users
 //increment numoflikes
 router.patch("/:_id/like", async (req, res) => {

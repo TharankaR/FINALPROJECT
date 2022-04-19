@@ -4,11 +4,12 @@ import axios from "axios";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./app.css";
 import { format } from "timeago.js";
-import { Room, Star, FavoriteBorder } from "@material-ui/icons";
+import { Room, Star } from "@material-ui/icons";
 import Map, { Marker, Popup } from "react-map-gl";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import LikeActions from "./components/LikeActions";
+import DeleteActions from "./components/DeleteActions";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(
@@ -32,6 +33,8 @@ function App() {
 
   const [numLike, setNumLike] = useState(null);
 
+  const [remove, setRemove] = useState(false);
+
   console.log(process.env.REACT_APP_MAPBOX);
 
   useEffect(() => {
@@ -39,9 +42,9 @@ function App() {
       .then((res) => res.json())
       .then((data) => {
         setPins(data.data);
-        console.log(data.data);
+        // console.log(data.data);
       });
-  }, [isLiked]);
+  }, [isLiked, remove]);
 
   const setTrue = () => {
     setIsLiked(true);
@@ -98,7 +101,6 @@ function App() {
   const handleLike = (_id) => {
     // console.log(isLiked);
     // console.log(numLike);
-    // console.log(currentUser);
 
     fetch(`/pins/${_id}/like`, {
       method: "PATCH",
@@ -117,6 +119,16 @@ function App() {
       });
   };
 
+  const handleDelete = (_id) => {
+    fetch(`/pins/${_id}/delete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "applicaation/json",
+      },
+    });
+    setRemove(!remove);
+  };
+
   return (
     pins && (
       <div className="App">
@@ -124,8 +136,6 @@ function App() {
           initialViewState={{
             longitude: -15,
             latitude: 40,
-            // longitude: 17,
-            // latitude: 47,
             zoom: 2,
           }}
           style={{
@@ -172,7 +182,7 @@ function App() {
                         <label htmlFor="place">Place</label>
                         <h4 className="place" name="place">
                           {p.title}
-                          {console.log(p)}
+                          {/* {console.log(p)} */}
                         </h4>
                         <label>Review</label>
                         <p className="desc"> {p.desc}</p>
@@ -190,9 +200,9 @@ function App() {
                           Number of likes: <b>{p.numOfLikes}</b>
                         </span>
                       </div>
-                      {console.log(p.likes?.includes(currentUserId))}
+                      {/* 
                       {console.log(currentUserId)}
-                      {console.log(p.likes)}
+                      {console.log(p.likes)} */}
                       {p.likes?.includes(currentUserId) ? (
                         <LikeActions
                           currentUser={currentUser}
@@ -208,6 +218,13 @@ function App() {
                           liked={isLiked}
                           handleLike={handleLike}
                           currentUserId={currentUserId}
+                        />
+                      )}
+
+                      {p.username === currentUser && (
+                        <DeleteActions
+                          handleDelete={handleDelete}
+                          _id={p._id}
                         />
                       )}
                     </Popup>
