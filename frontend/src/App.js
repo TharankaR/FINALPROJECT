@@ -43,23 +43,6 @@ function App() {
       });
   }, [isLiked]);
 
-  // useEffect(() => {
-  //   const getPins = async () => {
-  //     try {
-  //       const res = await fetch("/pins");
-  //       // const res = await axios.get("/pins");
-  //       console.log(res);
-  //       // setPins(res.data);
-  //       const listPins = await res.json();
-  //       console.log(listPins);
-  //       return listPins;
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   getPins().then((listPins) => setPins(listPins.data));
-  //   console.log(pins);
-  // }, []);
   const setTrue = () => {
     setIsLiked(true);
     setNumLike(-1);
@@ -109,12 +92,12 @@ function App() {
     window.localStorage.removeItem("user");
     setCurrentUser(null);
   };
-  console.log(pins);
-  console.log(isLiked);
+  // console.log(pins);
+  // console.log(isLiked);
 
   const handleLike = (_id) => {
-    console.log(isLiked);
-    console.log(numLike);
+    // console.log(isLiked);
+    // console.log(numLike);
     // console.log(currentUser);
 
     fetch(`/pins/${_id}/like`, {

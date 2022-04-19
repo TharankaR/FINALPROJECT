@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const pins = await Pin.find();
-    console.log(pins);
+    // console.log(pins);
     res.status(200).json({ status: 200, data: pins, message: "success" });
   } catch (err) {
     res.status(500).json(err);
@@ -40,8 +40,8 @@ router.get("/", async (req, res) => {
 //add _id to pins users
 //increment numoflikes
 router.patch("/:_id/like", async (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
+  // console.log(req.params);
+  // console.log(req.body);
   const client = new MongoClient(MONGO_URI, options);
   await client.connect();
   const { _id } = req.params;
